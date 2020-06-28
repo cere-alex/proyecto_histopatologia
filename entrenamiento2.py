@@ -3,48 +3,42 @@
 from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.keras.utils import plot_model, to_categorical
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.layers import Activation
-from tensorflow.keras.layers import SeparableConv2D, Conv2D
+from tensorflow.keras.layers import Conv2D
 from tensorflow.keras.layers import BatchNormalization
-from tensorflow.keras.layers import Dropout, MaxPooling2D, Flatten, Dense
+from tensorflow.keras.layers import MaxPooling2D, Flatten, Dense
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import sys
-import shutil
 from sklearn.model_selection import train_test_split
 import os
 import pandas as pd
-import matplotlib.pylab as plt
 import numpy as np
 import cv2
-import seaborn as sns
-from random import shuffle
 
 
 def Histopatologia(ancho, alto, profundidad, clases):
     """
-    Se crea un posible modelo.
+    Modelo de deteccion de Histopatologia.
+
+    Se crea un posible modelo aplicanndo 2 convoluciones y al final
+    se realizara un flat para el cubo formado linearize
     """
     model = Sequential()
     chanDim = -1
     # CONV 1
     model.add(Conv2D(32, (3, 3), padding="same", activation='relu',
                      input_shape=(alto, ancho, profundidad)))
-    # model.add(BatchNormalization(axis=chanDim))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    # model.add(Dropout(0.25))
 
     # (CONV 2)
     model.add(Conv2D(64, (3, 3), padding="same", activation="relu"))
     # model.add(BatchNormalization(axis=chanDim))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    # model.add(Dropout(0.25))
 
-    # first (and only) set of FC => RELU layers
+    # aplanado de la imagen
     model.add(Flatten())
     model.add(Dense(256, activation="relu"))
     model.add(BatchNormalization())
-    # model.add(Dropout(0.2))
 
     # softmax classifier
     model.add(Dense(clases, activation="softmax"))
