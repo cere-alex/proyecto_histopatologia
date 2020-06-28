@@ -11,10 +11,10 @@ los 16 GB de ram de la computadora.
 """
 import tensorflow as tf
 from keras.utils import np_utils  # representa las etiquetas en one-hot para kera
-from keras.models import Sequential
+from tensorflow.keras.models import Sequential
 from keras.layers.convolutional import Conv2D, MaxPooling2D
 from keras.layers.core import Flatten, Dense
-from keras.optimizers import SGD
+from keras.optimizers import Adam
 """
 Se cargara las
 """
@@ -36,7 +36,7 @@ for i in id:
 
 X = np.array(X_list)
 print("imagens a usar: "+str(X.shape)+"\n"+"labels = "+str(y.shape))
-X = np.array(X/255.0, dtype='float32')  # se normaliza los datos
+X = np.array((X-127)/127.0, dtype='float16')  # se normaliza los datos
 X = X.reshape(X.shape[0], X.shape[1], X.shape[2], 1)
 X.shape
 nc = 2
@@ -45,10 +45,23 @@ Y = np_utils.to_categorical(y, num_classes=nc)
 x_train, x_valid, y_train, y_valid = train_test_split(X, Y,
                                                       train_size=0.9,
                                                       random_state=42)
+x_ = []
+y_ = []
+for i in range(len(y_train)):
+    aux = x_train[i]
+    x_.append(aux)
+    y_.append(y_train[i])
+    for k in range(3):
+        aux = np.rot90(aux)
+        x_.append(aux)
+        y_.append(y_train[i])
 
-
+x_train = np.array(x_)
+y_train = np.array(y_)
+x_train.shape
+y_train.shape
 model = Sequential()
-model.add(Conv2D(filters=6, kernel_size=(5, 5),
+model.add(Conv2D(filters=8, kernel_size=(5, 5),
                  activation='relu', input_shape=(32, 32, 1)))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
@@ -61,10 +74,12 @@ model.add(Dense(120, activation='relu'))
 model.add(Dense(84, activation='relu'))
 model.add(Dense(nc, activation='softmax'))
 
-sgd = SGD(lr=0.1)
+# sgd = SGD(lr=0.1)
+
+adam = Adam(lr=0.01)
 
 model.compile(loss='categorical_crossentropy',
-              optimizer=sgd, metrics=['accuracy'])
+              optimizer=adam, metrics=['accuracy'])
 
 epocas = 10
 tamanho_lote = 128
