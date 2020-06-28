@@ -5,3 +5,6 @@ train_labels.csv
 sample_submission.csv
 modelo*
 checkpoint
+X_train.npy
+X_valid.npy
+base_dir/
