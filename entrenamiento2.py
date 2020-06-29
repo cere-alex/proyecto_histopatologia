@@ -48,8 +48,8 @@ def Histopatologia(ancho, alto, profundidad, clases):
     return model
 
 
-len(os.listdir('./test/'))
-len(os.listdir('./train/'))
+# len(os.listdir('./test/'))
+# len(os.listdir('./train/'))
 
 df = pd.read_csv('./train_labels.csv')
 """
@@ -64,7 +64,6 @@ df_0 = df[df['label'] == 0]
 df_1 = df[df['label'] == 1]
 
 df_train = pd.concat([df_0, df_1], axis=0).reset_index(drop=True)
-# df_train.set_index(['id'], inplace=True)
 
 
 """
